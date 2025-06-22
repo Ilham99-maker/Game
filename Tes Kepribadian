@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Kepribadian Anak & Remaja</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Warna latar belakang lembut */
+        }
+        /* Custom styles for rounded corners and shadow */
+        .card {
+            border-radius: 1.5rem; /* Lebih membulat */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn {
+            border-radius: 0.75rem; /* Tombol membulat */
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        /* Style for radio buttons */
+        input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: inline-block;
+            position: relative;
+            vertical-align: middle;
+            height: 1.25rem; /* 20px */
+            width: 1.25rem; /* 20px */
+            margin-right: 0.5rem; /* 8px */
+            border-radius: 50%;
+            border: 2px solid #a0aec0; /* Border abu-abu */
+            background-color: #edf2f7; /* Warna latar belakang default */
+            cursor: pointer;
+            outline: none;
+        }
+        input[type="radio"]:checked {
+            border-color: #4299e1; /* Warna border saat checked */
+            background-color: #2b6cb0; /* Warna latar belakang saat checked */
+        }
+        input[type="radio"]:checked::before {
+            content: '';
+            display: block;
+            width: 0.6rem; /* Lebih kecil dari kotak radio */
+            height: 0.6rem;
+            background: white; /* Titik putih di tengah */
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Style for radio button labels */
+        .radio-label {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem; /* Padding */
+            border: 1px solid #e2e8f0; /* Border abu-abu terang */
+            background-color: #ffffff; /* Latar belakang putih */
+            border-radius: 0.75rem; /* Membulat */
+            margin-bottom: 0.75rem; /* Spasi bawah */
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .radio-label:hover {
+            background-color: #f7fafc; /* Sedikit lebih gelap saat hover */
+            border-color: #cbd5e0;
+        }
+        .radio-label input[type="radio"]:checked + span {
+            font-weight: 600; /* Teks lebih tebal saat dipilih */
+            color: #2b6cb0; /* Warna teks saat dipilih */
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white card max-w-2xl w-full p-8 md:p-12 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Tes Kepribadian Seru!</h1>
+        <p class="text-gray-600 mb-8 text-lg">Jawab pertanyaan ini untuk menemukan kepribadian fantasi Anda!</p>
+
+        <div id="quiz-container" class="space-y-6 text-left">
+            <!-- Pertanyaan akan dimasukkan di sini oleh JavaScript -->
+        </div>
+
+        <button id="submit-btn" class="mt-8 w-full bg-blue-600 text-white py-3 px-6 btn hover:bg-blue-700 font-semibold text-lg">
+            Lihat Hasil!
+        </button>
+
+        <div id="result-container" class="mt-10 p-6 md:p-8 bg-blue-50 card hidden">
+            <h2 class="text-2xl md:text-3xl font-bold text-blue-800 mb-4">Hasil Kepribadian Anda:</h2>
+            <div id="result-text" class="text-blue-700 text-lg md:text-xl leading-relaxed">
+                <!-- Hasil akan ditampilkan di sini -->
+            </div>
+            <button id="reset-btn" class="mt-6 w-full bg-gray-500 text-white py-3 px-6 btn hover:bg-gray-600 font-semibold text-md">
+                Ulangi Tes
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Array berisi pertanyaan, pilihan, dan jenis kepribadian yang dipengaruhi
+        const questions = [
+            {
+                question: "Ketika dihadapkan pada masalah besar, kamu lebih suka...",
+                choices: [
+                    { text: "Menghadapinya langsung dengan keberanian.", type: "Pahlawan" },
+                    { text: "Mencari solusi logis dan strategis.", type: "Penyihir" },
+                    { text: "Mencari jalur baru atau petualangan.", type: "Petualang" },
+                    { text: "Melindungi teman dan orang terdekat.", type: "Pelindung" }
+                ]
+            },
+            {
+                question: "Warna favoritmu yang paling menggambarkan dirimu adalah...",
+                choices: [
+                    { text: "Merah menyala atau oranye.", type: "Pahlawan" },
+                    { text: "Biru tua atau ungu.", type: "Penyihir" },
+                    { text: "Hijau hutan atau kuning cerah.", type: "Petualang" },
+                    { text: "Coklat bumi atau abu-abu.", type: "Pelindung" }
+                ]
+            },
+            {
+                question: "Kekuatan super apa yang paling ingin kamu miliki?",
+                choices: [
+                    { text: "Kekuatan fisik luar biasa.", type: "Pahlawan" },
+                    { text: "Telekinesis atau sihir.", type: "Penyihir" },
+                    { text: "Terbang atau teleportasi.", type: "Petualang" },
+                    { text: "Menyembuhkan atau membuat perisai.", type: "Pelindung" }
+                ]
+            },
+            {
+                question: "Di waktu luang, kamu paling suka...",
+                choices: [
+                    { text: "Berolahraga atau mencari tantangan fisik.", type: "Pahlawan" },
+                    { text: "Membaca buku atau memecahkan teka-teki.", type: "Penyihir" },
+                    { text: "Menjelajahi tempat baru atau berpetualang.", type: "Petualang" },
+                    { text: "Menghabiskan waktu bersama keluarga atau hewan peliharaan.", type: "Pelindung" }
+                ]
+            },
+            {
+                question: "Jika kamu adalah hewan, kamu akan menjadi...",
+                choices: [
+                    { text: "Singa yang gagah berani.", type: "Pahlawan" },
+                    { text: "Burung hantu yang bijaksana.", type: "Penyihir" },
+                    { text: "Elang yang bebas menjelajah.", type: "Petualang" },
+                    { text: "Beruang yang melindungi anaknya.", type: "Pelindung" }
+                ]
+            }
+        ];
+
+        // Deskripsi untuk setiap hasil kepribadian
+        const personalityResults = {
+            "Pahlawan": {
+                title: "Pahlawan Berani!",
+                description: "Anda adalah individu yang berani dan tak gentar menghadapi tantangan. Anda siap memimpin dan melindungi, dengan semangat juang yang tinggi. Petualangan selalu memanggil nama Anda!"
+            },
+            "Penyihir": {
+                title: "Penyihir Bijaksana!",
+                description: "Anda memiliki pikiran yang tajam dan haus akan pengetahuan. Anda suka memecahkan misteri dan menemukan solusi cerdas. Kebijaksanaan adalah kekuatan terbesar Anda!"
+            },
+            "Petualang": {
+                title: "Petualang Bebas!",
+                description: "Anda adalah jiwa bebas yang selalu ingin menjelajahi dunia dan mencari pengalaman baru. Rutinitas bukan untuk Anda; Anda selalu mencari kegembiraan di setiap sudut!"
+            },
+            "Pelindung": {
+                title: "Pelindung Setia!",
+                description: "Anda adalah pribadi yang penuh kasih sayang dan sangat loyal kepada orang-orang yang Anda sayangi. Anda selalu siap memberikan dukungan dan memastikan semua orang aman dan bahagia."
+            }
+        };
+
+        const quizContainer = document.getElementById('quiz-container');
+        const submitButton = document.getElementById('submit-btn');
+        const resultContainer = document.getElementById('result-container');
+        const resultText = document.getElementById('result-text');
+        const resetButton = document.getElementById('reset-btn');
+
+        // Fungsi untuk menampilkan pertanyaan
+        function loadQuestions() {
+            quizContainer.innerHTML = ''; // Kosongkan kontainer sebelum mengisi
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('mb-6', 'p-4', 'bg-blue-50', 'card'); // Tambah kelas card
+                questionDiv.innerHTML = `
+                    <p class="text-xl font-semibold text-gray-700 mb-4">${index + 1}. ${q.question}</p>
+                    <div class="space-y-3">
+                        ${q.choices.map((choice, choiceIndex) => `
+                            <label class="radio-label">
+                                <input type="radio" name="question${index}" value="${choice.type}" required>
+                                <span>${choice.text}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        // Fungsi untuk menghitung hasil
+        function calculateResult() {
+            const scores = {
+                "Pahlawan": 0,
+                "Penyihir": 0,
+                "Petualang": 0,
+                "Pelindung": 0
+            };
+            let allAnswered = true; // Flag untuk memeriksa apakah semua pertanyaan dijawab
+
+            questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                if (selectedOption) {
+                    const type = selectedOption.value;
+                    scores[type]++;
+                } else {
+                    allAnswered = false; // Ada pertanyaan yang belum dijawab
+                }
+            });
+
+            if (!allAnswered) {
+                resultText.innerHTML = '<p class="text-red-600 font-bold">Harap jawab semua pertanyaan sebelum melihat hasil!</p>';
+                resultContainer.classList.remove('hidden');
+                resultContainer.classList.add('bg-red-50'); // Latar belakang merah untuk pesan error
+                submitButton.style.display = 'block'; // Pastikan tombol submit tetap terlihat
+                resetButton.style.display = 'none'; // Sembunyikan tombol reset
+                return;
+            }
+
+            // Jika semua dijawab, hapus warna latar belakang error jika sebelumnya ada
+            resultContainer.classList.remove('bg-red-50');
+            resultContainer.classList.add('bg-blue-50');
+            
+            // Temukan tipe kepribadian dengan skor tertinggi
+            let maxScore = -1;
+            let resultType = "Tidak Diketahui";
+
+            for (const type in scores) {
+                if (scores[type] > maxScore) {
+                    maxScore = scores[type];
+                    resultType = type;
+                } else if (scores[type] === maxScore) {
+                    // Jika ada seri, bisa ditambahkan logika lain, misal memilih secara acak atau kombinasi
+                    // Untuk sederhana, kita akan tetap pada yang pertama ditemukan jika seri
+                }
+            }
+
+            const finalResult = personalityResults[resultType];
+            resultText.innerHTML = `
+                <h3 class="text-2xl font-bold mb-2">${finalResult.title}</h3>
+                <p>${finalResult.description}</p>
+            `;
+            resultContainer.classList.remove('hidden');
+            submitButton.style.display = 'none'; // Sembunyikan tombol submit
+            resetButton.style.display = 'block'; // Tampilkan tombol reset
+        }
+
+        // Event listener untuk tombol submit
+        submitButton.addEventListener('click', calculateResult);
+
+        // Event listener untuk tombol reset
+        resetButton.addEventListener('click', () => {
+            // Sembunyikan hasil
+            resultContainer.classList.add('hidden');
+            // Tampilkan kembali tombol submit
+            submitButton.style.display = 'block';
+            // Sembunyikan tombol reset
+            resetButton.style.display = 'none';
+            // Reset semua pilihan radio
+            document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                radio.checked = false;
+            });
+            // Gulir kembali ke atas halaman atau ke awal kuesioner
+            quizContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Muat pertanyaan saat halaman dimuat
+        window.onload = loadQuestions;
+    </script>
+</body>
+</html>
